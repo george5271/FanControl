@@ -40,6 +40,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if window == nil {
             let w = NSWindow(contentRect: .zero, styleMask: [.titled, .closable], backing: .buffered, defer: false)
             w.title = "FanControl"
+            // The panel draws its own dark background: blend the title bar into it.
+            w.titlebarAppearsTransparent = true
+            w.appearance = NSAppearance(named: .darkAqua)
+            w.backgroundColor = Theme.nsInk
             w.contentView = NSHostingView(rootView: MenuView().environmentObject(AppModel.shared))
             w.isReleasedWhenClosed = false
             w.center()
@@ -53,9 +57,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     #if DEBUG
     private func snapshotMenu(to url: URL) {
         RunLoop.main.run(until: Date().addingTimeInterval(1.5))  // let the helper answer
-        let host = NSHostingView(rootView: MenuView().environmentObject(AppModel.shared)
-            .background(Color(nsColor: .windowBackgroundColor)))
-        host.appearance = NSAppearance(named: .aqua)
+        let host = NSHostingView(rootView: MenuView().environmentObject(AppModel.shared))
+        host.appearance = NSAppearance(named: .darkAqua)
         host.frame.size = host.fittingSize
         let window = NSWindow(contentRect: host.frame, styleMask: .borderless, backing: .buffered, defer: false)
         window.contentView = host
