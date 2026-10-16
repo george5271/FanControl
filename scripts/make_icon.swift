@@ -1,4 +1,4 @@
-// Renders Resources/AppIcon.icns: a white "fan.fill" SF Symbol on a blue rounded square.
+// Renders Resources/AppIcon.icns: a white "fan.fill" SF Symbol on a magenta rounded square.
 // Usage: swift scripts/make_icon.swift <output.icns>
 import AppKit
 
@@ -17,8 +17,8 @@ func render(_ size: Int) -> Data {
     // macOS icon grid: the shape occupies ~80% of the canvas.
     let rect = NSRect(x: s * 0.1, y: s * 0.1, width: s * 0.8, height: s * 0.8)
     let shape = NSBezierPath(roundedRect: rect, xRadius: s * 0.18, yRadius: s * 0.18)
-    NSGradient(starting: NSColor(calibratedRed: 0.20, green: 0.55, blue: 1.0, alpha: 1),
-               ending: NSColor(calibratedRed: 0.05, green: 0.25, blue: 0.70, alpha: 1))!
+    NSGradient(starting: NSColor(calibratedRed: 1.00, green: 0.17, blue: 0.60, alpha: 1),
+               ending: NSColor(calibratedRed: 0.30, green: 0.03, blue: 0.18, alpha: 1))!
         .draw(in: shape, angle: -90)
     let config = NSImage.SymbolConfiguration(pointSize: s * 0.45, weight: .semibold)
         .applying(.init(paletteColors: [.white]))
