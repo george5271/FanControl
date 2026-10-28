@@ -34,12 +34,28 @@ public extension SMC {
     /// Intel: TC0P/TC0D/TC0E/TC0F and per-core TC1C, TC2C...
     func cpuTemperatureKeys() -> [String] {
         let intel: Set<String> = ["TC0P", "TC0D", "TC0E", "TC0F", "TC0H"]
-        return allKeys().filter { key in
+        return plausibleTemperatureKeys { key in
             let isAppleSilicon = key.hasPrefix("Tp") || key.hasPrefix("Te")
             let isIntelCore = key.hasPrefix("TC") && key.hasSuffix("C")
-            guard isAppleSilicon || isIntelCore || intel.contains(key) else { return false }
-            // Only keep sensors that currently report a plausible temperature.
-            guard let t = readDouble(key) else { return false }
+            return isAppleSilicon || isIntelCore || intel.contains(key)
+        }
+    }
+
+    /// SMC keys of GPU temperature sensors. Apple Silicon: Tg*. Intel: TG0P/TG0D/TG0H.
+    func gpuTemperatureKeys() -> [String] {
+        let intel: Set<String> = ["TG0P", "TG0D", "TG0H"]
+        return plausibleTemperatureKeys { $0.hasPrefix("Tg") || intel.contains($0) }
+    }
+
+    /// SMC keys of battery temperature sensors (TB0T, TB1T, TB2T...).
+    func batteryTemperatureKeys() -> [String] {
+        plausibleTemperatureKeys { $0.hasPrefix("TB") && $0.hasSuffix("T") }
+    }
+
+    /// Keys matching `filter` that currently report a plausible temperature.
+    private func plausibleTemperatureKeys(_ filter: (String) -> Bool) -> [String] {
+        allKeys().filter { key in
+            guard filter(key), let t = readDouble(key) else { return false }
             return t > 5 && t < 130
         }
     }
